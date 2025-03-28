@@ -125,7 +125,7 @@ void GameGL::Update()
 void GameGL::Render()
 {
     //Background color
-    glClearColor(0.7f, 0.13f, 0.17f, 1.0f);
+    glClearColor(0, 0, 0, 0);
     //Clean the back buffer and assing the new color
     glClear(GL_COLOR_BUFFER_BIT);
 
