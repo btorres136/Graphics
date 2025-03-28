@@ -1,5 +1,5 @@
-#include "Game.hpp"
-#include "GameGL.hpp"
+#include "game.hpp"
+#include "game_gl.hpp"
 
 #define GL
 
@@ -18,15 +18,15 @@ int main(int agrc, char * argv[])
     game->clean();
     #else
     GameGL *game = new GameGL();
-    game->init("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, false);
-    game->update();
-    while(game->isRunning())
+    game->Init("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, false);
+    game->Update();
+    while(game->is_running())
     {
-        game->handleEvents();
+        game->HandleEvents();
         //game->update();
-        game->render();
+        game->Render();
     }
-    game->clean();
+    game->Clean();
     #endif
 
     return 0;

@@ -1,4 +1,4 @@
-#include "Map.hpp"
+#include "map.hpp"
 
 Map::Map()
 {
@@ -7,14 +7,14 @@ Map::Map()
 
 Map::~Map()
 {
-    if(m_map)
+    if(map_)
     {
-        delete m_map;
-        m_map = 0;
+        delete map_;
+        map_ = 0;
     }
 }
 
-void Map::renderMap(SDL_Renderer* renderer)
+void Map::RenderMap(SDL_Renderer* renderer)
 {
 
 }

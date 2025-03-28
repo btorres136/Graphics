@@ -1,30 +1,30 @@
-#include "VAO.hpp"
+#include "vao.hpp"
 
 VAO::VAO() 
 {
-  glGenVertexArrays(1, &m_id);
+  glGenVertexArrays(1, &id_);
 }
 
-void VAO::linkVBO(VBO &vbo, GLuint layout)
+void VAO::LinkVBO(VBO &vbo, GLuint layout)
 {
-  vbo.bind();
+  vbo.Bind();
   glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
   glEnableVertexAttribArray(layout);
-  vbo.unbind();
+  vbo.Unbind();
 }
 
-void VAO::bind()
+void VAO::Bind()
 {
-  glBindVertexArray(m_id);
+  glBindVertexArray(id_);
 }
 
-void VAO::unbind()
+void VAO::Unbind()
 {
   glBindVertexArray(0);
 }
 
-void VAO::remove()
+void VAO::Delete()
 {
-  glDeleteVertexArrays(1, &m_id);
+  glDeleteVertexArrays(1, &id_);
 }
 

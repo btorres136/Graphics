@@ -9,9 +9,9 @@ public:
     Map();
     ~Map();
     void setSize(int high, int width);
-    void renderMap(SDL_Renderer* renderer);
+    void RenderMap(SDL_Renderer* renderer);
 private:
-    int *m_map;
+    int *map_;
 };
 
 #endif

@@ -1,5 +1,5 @@
-#include "GameGL.hpp"
 #include <iostream>
+#include "game_gl.hpp"
 
 /*
 
@@ -7,22 +7,6 @@ See link:
 https://github.com/VictorGordan/opengl-tutorials/blob/main/YoutubeOpenGL%204%20-%20Organizing/Main.cpp
 
 */
-
-
-// Vertex Shader source code
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-//Fragment Shader source code
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-"}\n\0";
 
 // Vertices coordinates
 GLfloat vertices[] =
@@ -44,23 +28,23 @@ GLuint indices[] =
 };
 
 GameGL::GameGL() :
-    m_isRunning(false),
-    m_window(nullptr)
+    is_running_(false),
+    window_(nullptr)
 {}
 
 GameGL::~GameGL()
 {
-    if(m_window)
+    if(window_)
     {
-        m_window = nullptr;
+        window_ = nullptr;
     }
 }
 
-void GameGL::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
+void GameGL::Init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
     int flags = 0;
-    m_windowXSize = width;
-    m_windowYSize = height;
+    window_x_size_ = width;
+    window_y_size_ = height;
     if(fullscreen)
     {
         flags = SDL_WINDOW_FULLSCREEN;
@@ -70,13 +54,13 @@ void GameGL::init(const char *title, int xpos, int ypos, int width, int height, 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-        m_window = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_OPENGL | flags);
-        if(m_window)
+        window_ = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_OPENGL | flags);
+        if(window_)
         {
             std::cout << "Window Created!" << std::endl;
         }
-        m_glContext = SDL_GL_CreateContext(m_window);
-        if(m_glContext)
+        gl_context_ = SDL_GL_CreateContext(window_);
+        if(gl_context_)
         {
             std::cout << "GL Context Created!" << std::endl;
         }
@@ -85,15 +69,15 @@ void GameGL::init(const char *title, int xpos, int ypos, int width, int height, 
         {
             std::cout << "GLEW initialized" << std::endl;
         }
-        m_isRunning = true;
+        is_running_ = true;
     }
     else
     {
-        m_isRunning = false;
+        is_running_ = false;
     }
 }
 
-void GameGL::handleEvents()
+void GameGL::HandleEvents()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -101,7 +85,7 @@ void GameGL::handleEvents()
     switch(event.type)
     {
         case SDL_QUIT:
-            m_isRunning = false;
+            is_running_ = false;
             break;
         case SDL_KEYDOWN:
             if(keys[SDL_SCANCODE_W] == 1)
@@ -122,52 +106,55 @@ void GameGL::handleEvents()
     }
 }
 
-void GameGL::update()
+void GameGL::Update()
 {
-    m_vao = new VAO();
-    m_vao->bind();
+    shader_program_ = new Shader("../default.vert", "../default.frag");
+    vao_ = new VAO();
+    vao_->Bind();
 
-    m_vbo = new VBO(vertices, sizeof(vertices));
-    m_vao->linkVBO(*m_vbo, 0);
+    vbo_ = new VBO(vertices, sizeof(vertices));
+    vao_->LinkVBO(*vbo_, 0);
 
-    m_ebo = new EBO(indices, sizeof(indices));
+    ebo_ = new EBO(indices, sizeof(indices));
 
-    m_vao->unbind();
-    m_vbo->unbind();
-    m_ebo->unbind();
+    vao_->Unbind();
+    vbo_->Unbind();
+    ebo_->Unbind();
 }
 
-void GameGL::render()
+void GameGL::Render()
 {
     //Background color
     glClearColor(0.7f, 0.13f, 0.17f, 1.0f);
     //Clean the back buffer and assing the new color
     glClear(GL_COLOR_BUFFER_BIT);
 
-    m_vao->bind();
+    shader_program_->Activate(); 
+
+    vao_->Bind();
 
     //Draw the triangle using the GL_TRIANGLE primitives
     glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
     // Take care of all GLFW events
-    SDL_GL_SwapWindow(m_window);
+    SDL_GL_SwapWindow(window_);
 }
 
 
-void GameGL::clean()
+void GameGL::Clean()
 {
     //glDeleteProgram(shaderProgam);
-    m_vao->remove();
-    m_vbo->remove();
-    m_ebo->remove();
+    vao_->Delete();
+    vbo_->Delete();
+    ebo_->Delete();
 
-    SDL_GL_DeleteContext(m_glContext);
-    SDL_DestroyWindow(m_window);
+    SDL_GL_DeleteContext(gl_context_);
+    SDL_DestroyWindow(window_);
     SDL_Quit();
     std::cout << "Game Cleaned!" << std::endl;
 }
 
-bool GameGL::isRunning()
+bool GameGL::is_running()
 {
-    return m_isRunning;
+    return is_running_;
 }
 

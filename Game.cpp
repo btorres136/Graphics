@@ -1,4 +1,4 @@
-#include "Game.hpp"
+#include "game.hpp"
 #include <iostream>
 
 int map[] = 
@@ -14,53 +14,53 @@ int map[] =
 };
 
 Game::Game() :
-    m_isRunning(false),
-    m_renderer(nullptr),
-    m_window(nullptr)
+    is_running_(false),
+    renderer_(nullptr),
+    window_(nullptr)
 {}
 
 Game::~Game()
 {
-    if(m_renderer)
+    if(renderer_)
     {
-        m_renderer = nullptr;
+        renderer_ = nullptr;
     }
-    if(m_window)
+    if(window_)
     {
-        m_window = nullptr;
+        window_ = nullptr;
     }
 }
 
-void Game::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
+void Game::Init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
     int flags = 0;
-    m_windowXSize = width;
-    m_windowYSize = height;
+    window_x_size_ = width;
+    window_y_size_ = height;
     if(fullscreen)
     {
         flags = SDL_WINDOW_FULLSCREEN;
     }
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
-        m_window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-        if(m_window)
+        window_ = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+        if(window_)
         {
             std::cout << "Window Created!" << std::endl;
         }
-        m_renderer = SDL_CreateRenderer(m_window, -1, 0);
-        if(m_renderer)
+        renderer_ = SDL_CreateRenderer(window_, -1, 0);
+        if(renderer_)
         {
             std::cout << "Renderer Created!" << std::endl;
         }
-        m_isRunning = true;
+        is_running_ = true;
     }
     else
     {
-        m_isRunning = false;
+        is_running_ = false;
     }
 }
 
-void Game::handleEvents()
+void Game::HandleEvents()
 {
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -68,24 +68,24 @@ void Game::handleEvents()
     switch(event.type)
     {
         case SDL_QUIT:
-            m_isRunning = false;
+            is_running_ = false;
             break;
         case SDL_KEYDOWN:
             if(keys[SDL_SCANCODE_W] == 1)
             {
-                m_player.movePlayer(Directions::UP);
+                player_.MovePlayer(Directions::UP);
             }
             else if(keys[SDL_SCANCODE_S] == 1) 
             {
-                m_player.movePlayer(Directions::DOWN);
+                player_.MovePlayer(Directions::DOWN);
             }
             else if(keys[SDL_SCANCODE_A] == 1)
             {
-                m_player.movePlayer(Directions::LEFT);
+                player_.MovePlayer(Directions::LEFT);
             }
             else if(keys[SDL_SCANCODE_D] == 1)
             {
-                m_player.movePlayer(Directions::RIGHT);
+                player_.MovePlayer(Directions::RIGHT);
             }
             break;
         default:
@@ -93,15 +93,15 @@ void Game::handleEvents()
     }
 }
 
-void Game::update()
+void Game::Update()
 {
 
 }
 
-void Game::render()
+void Game::Render()
 {
-    SDL_SetRenderDrawColor(m_renderer, 0,0,0,255);
-    SDL_RenderClear(m_renderer);
+    SDL_SetRenderDrawColor(renderer_, 0,0,0,255);
+    SDL_RenderClear(renderer_);
     //this is where we would add stuff to render
     /*int blockXSize = m_windowXSize / 8;
     int blockYSize = m_windowYSize / 8;
@@ -125,21 +125,21 @@ void Game::render()
             SDL_RenderFillRect(m_renderer, &rect);
         }
     }*/
-    m_player.renderPlayer(m_renderer);
+    player_.RenderPlayer(renderer_);
     //////////////////////////////////////////////
-    SDL_RenderPresent(m_renderer);
+    SDL_RenderPresent(renderer_);
 }
 
 
-void Game::clean()
+void Game::Clean()
 {
-    SDL_DestroyWindow(m_window);
-    SDL_DestroyRenderer(m_renderer);
+    SDL_DestroyWindow(window_);
+    SDL_DestroyRenderer(renderer_);
     SDL_Quit();
     std::cout << "Game Cleaned!" << std::endl;
 }
 
-bool Game::isRunning()
+bool Game::is_running()
 {
-    return m_isRunning;
+    return is_running_;
 }

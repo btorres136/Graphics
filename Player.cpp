@@ -1,8 +1,7 @@
-#include "Player.hpp"
-#include <math.h>
 #include <iostream>
-#include "utils.hpp"
 #include <cmath>
+#include "player.hpp"
+#include "utils.hpp"
 
 int map2[]=           //the map array. Edit to change level but keep the outer walls
 {
@@ -21,77 +20,77 @@ int map2[]=           //the map array. Edit to change level but keep the outer w
 
 Player::Player()
 {
-    m_player.h = 10;
-    m_player.w = 10;
-    m_player.x = 150;
-    m_player.y = 400;
-    m_playerDeltas.angle = 90;
-    m_playerDeltas.deltaX = cos(degToRad(m_playerDeltas.angle));
-    m_playerDeltas.deltaY = -sin(degToRad(m_playerDeltas.angle));
+    player_.h = 10;
+    player_.w = 10;
+    player_.x = 150;
+    player_.y = 400;
+    player_deltas_.angle = 90;
+    player_deltas_.deltaX = cos(DegToRad(player_deltas_.angle));
+    player_deltas_.deltaY = -sin(DegToRad(player_deltas_.angle));
 }
 
 Player::~Player()
 {}
 
-void Player::movePlayer(Directions direction)
+void Player::MovePlayer(Directions direction)
 {
     switch (direction)
     {
         case Directions::LEFT:
-            m_playerDeltas.angle += 5;
-            m_playerDeltas.radians = degToRad(fixAngle((m_playerDeltas.angle)));
-            m_playerDeltas.deltaX = cos(m_playerDeltas.radians);
-            m_playerDeltas.deltaY = -sin(m_playerDeltas.radians);
+            player_deltas_.angle += 5;
+            player_deltas_.radians = DegToRad(FixAngle((player_deltas_.angle)));
+            player_deltas_.deltaX = cos(player_deltas_.radians);
+            player_deltas_.deltaY = -sin(player_deltas_.radians);
             break;
         case Directions::RIGHT:
-            m_playerDeltas.angle -= 5;
-            m_playerDeltas.radians = degToRad(fixAngle((m_playerDeltas.angle)));
-            m_playerDeltas.deltaX = cos(m_playerDeltas.radians);
-            m_playerDeltas.deltaY = -sin(m_playerDeltas.radians);
+            player_deltas_.angle -= 5;
+            player_deltas_.radians = DegToRad(FixAngle((player_deltas_.angle)));
+            player_deltas_.deltaX = cos(player_deltas_.radians);
+            player_deltas_.deltaY = -sin(player_deltas_.radians);
             break;
         case Directions::UP:
-            m_player.x += m_playerDeltas.deltaX * 5.0f;
-            m_player.y += m_playerDeltas.deltaY * 5.0f;
+            player_.x += player_deltas_.deltaX * 5.0f;
+            player_.y += player_deltas_.deltaY * 5.0f;
             break;
         case Directions::DOWN:
-            m_player.x -= m_playerDeltas.deltaX * 5.0f;
-            m_player.y -= m_playerDeltas.deltaY * 5.0f;
+            player_.x -= player_deltas_.deltaX * 5.0f;
+            player_.y -= player_deltas_.deltaY * 5.0f;
             break;
         default:
             break;
     }
 }
 
-void Player::calculateRays(SDL_Renderer * renderer)
+void Player::CalculateRays(SDL_Renderer * renderer)
 {
     int r, mx, my, mp, dof;
     float rayX = 0, rayY = 0, xOffset = 0, yOffset = 0, rayAngle = 0, vx = 0, vy = 0;
     float disV, disH;
-    rayAngle = fixAngle(m_playerDeltas.angle + 30);
+    rayAngle = FixAngle(player_deltas_.angle + 30);
     for(r = 0; r < 60; r++)
     {
-        float playerRadians = degToRad(rayAngle);
+        float playerRadians = DegToRad(rayAngle);
         dof=0; disV=100000;
         float playerTan = tan(playerRadians);
         //verical lines
         if(cos(playerRadians) > 0.0001)
         {
-            rayX = (((int)m_player.x>>6)<<6) + 64;
-            rayY = (m_player.x-rayX) * playerTan+m_player.y;
+            rayX = (((int)player_.x>>6)<<6) + 64;
+            rayY = (player_.x-rayX) * playerTan+player_.y;
             xOffset = 64;
             yOffset = -xOffset*playerTan;
         }
         else if(cos(playerRadians) < -0.0001)
         {
-            rayX = (((int)m_player.x>>6)<<6) - 0.0001;
-            rayY = (m_player.x-rayX) * playerTan+m_player.y;
+            rayX = (((int)player_.x>>6)<<6) - 0.0001;
+            rayY = (player_.x-rayX) * playerTan+player_.y;
             xOffset = -64;
             yOffset = -xOffset*playerTan;
         }
         else
         {
-            rayX = m_player.x;
-            rayY = m_player.y;
+            rayX = player_.x;
+            rayY = player_.y;
             dof = 8;
         }
         while(dof < 8)
@@ -102,7 +101,7 @@ void Player::calculateRays(SDL_Renderer * renderer)
             if(mp > 0 && mp < 64 && map2[mp] == 1) 
             {
                 dof = 8;
-                disV=cos(playerRadians)*(rayX-m_player.x)-sin(playerRadians)*(rayY-m_player.y);
+                disV=cos(playerRadians)*(rayX-player_.x)-sin(playerRadians)*(rayY-player_.y);
             }
             else
             {   
@@ -119,21 +118,21 @@ void Player::calculateRays(SDL_Renderer * renderer)
 
         if(sin(playerRadians) > 0.0001)
         { 
-            rayY = (((int)m_player.y>>6)<<6) -0.0001; 
-            rayX = (m_player.y-rayY)*playerTan+m_player.x; 
+            rayY = (((int)player_.y>>6)<<6) -0.0001; 
+            rayX = (player_.y-rayY)*playerTan+player_.x; 
             yOffset = -64; 
             xOffset = -yOffset*playerTan;
         }//looking up 
         else if(sin(playerRadians) < -0.0001)
         { 
-            rayY = (((int)m_player.y>>6)<<6)+64;      
-            rayX = (m_player.y-rayY)*playerTan+m_player.x; 
+            rayY = (((int)player_.y>>6)<<6)+64;      
+            rayX = (player_.y-rayY)*playerTan+player_.x; 
             yOffset = 64; 
             xOffset = -yOffset*playerTan;
         }//looking down
         else{ 
-            rayX=m_player.x; 
-            rayY=m_player.y; 
+            rayX=player_.x; 
+            rayY=player_.y; 
             dof=8;
         }                                                   //looking straight left or right
        
@@ -145,7 +144,7 @@ void Player::calculateRays(SDL_Renderer * renderer)
             if(mp>0 && mp<64 && map2[mp]==1)
             { 
                 dof=8; 
-                disH=cos(playerRadians)*(rayX-m_player.x)-sin(playerRadians)*(rayY-m_player.y);
+                disH=cos(playerRadians)*(rayX-player_.x)-sin(playerRadians)*(rayY-player_.y);
             }//hit         
             else
             { 
@@ -160,9 +159,9 @@ void Player::calculateRays(SDL_Renderer * renderer)
             rayX=vx; rayY=vy; disH=disV; 
             SDL_SetRenderDrawColor(renderer, 200,200,200, SDL_ALPHA_OPAQUE);
         }                  //horizontal hit first
-        int ca=fixAngle(m_playerDeltas.angle-rayAngle); 
+        int ca=FixAngle(player_deltas_.angle-rayAngle); 
 
-        disH=disH*cos(degToRad(ca));
+        disH=disH*cos(DegToRad(ca));
         int lineH = (64*512)/(disH); 
         if(lineH>512)
         { 
@@ -177,12 +176,12 @@ void Player::calculateRays(SDL_Renderer * renderer)
         wall.y = lineOff;
         SDL_RenderFillRect(renderer, &wall);
 
-        rayAngle = fixAngle(rayAngle - 1);
+        rayAngle = FixAngle(rayAngle - 1);
     }
 }
 
-void Player::renderPlayer(SDL_Renderer* renderer)
+void Player::RenderPlayer(SDL_Renderer* renderer)
 {
-    calculateRays(renderer);
+    CalculateRays(renderer);
 }
 

@@ -34,14 +34,14 @@ class Player
 public:
     Player();
     ~Player();
-    void movePlayer(Directions direction);
-    void renderPlayer(SDL_Renderer * renderer);
-    int getX();
-    int getY();
-    void calculateRays(SDL_Renderer * renderer);
+    void MovePlayer(Directions direction);
+    void RenderPlayer(SDL_Renderer * renderer);
+    int x();
+    int y();
+    void CalculateRays(SDL_Renderer * renderer);
 private:
-    SDL_FRect m_player;
-    PlayerDeltas m_playerDeltas;
+    SDL_FRect player_;
+    PlayerDeltas player_deltas_;
 
 };
 
