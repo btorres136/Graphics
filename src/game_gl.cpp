@@ -108,7 +108,7 @@ void GameGL::HandleEvents()
 
 void GameGL::Update()
 {
-    shader_program_ = new Shader("../default.vert", "../default.frag");
+    shader_program_ = new Shader("../shaders/default/default.vert", "../shaders/default/default.frag");
     vao_ = new VAO();
     vao_->Bind();
 

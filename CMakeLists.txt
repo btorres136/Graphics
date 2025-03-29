@@ -1,16 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15..3.20)
 
 set(CMAKE_CXX_STANDARD 20)
-project(Game)
+project(Game VERSION 1.0 LANGUAGES CXX)
 
-
-find_package(SDL2 CONFIG REQUIRED)
-find_package(GLEW REQUIRED)
-
-add_executable(Game main.cpp map.cpp game.cpp player.cpp game_gl.cpp vao.cpp vbo.cpp ebo.cpp shader.cpp)
-target_link_libraries(Game
-    PRIVATE
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-    GLEW::GLEW
-)
+add_subdirectory(src)
