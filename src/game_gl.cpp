@@ -11,20 +11,17 @@ https://github.com/VictorGordan/opengl-tutorials/blob/main/YoutubeOpenGL%204%20-
 // Vertices coordinates
 GLfloat vertices[] =
 {
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
-	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
-	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
-	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+    0.5f,  0.5f, 0.0f,  // top right
+    0.5f, -0.5f, 0.0f,  // bottom right
+   -0.5f, -0.5f, 0.0f,  // bottom left
+   -0.5f,  0.5f, 0.0f   // top left
 };
 
 // Indices for vertices order
 GLuint indices[] =
 {
-	0, 3, 5, // Lower left triangle
-	3, 2, 4, // Lower right triangle
-	5, 4, 1 // Upper triangle
+    0, 1, 3,   // first triangle
+    1, 2, 3    // second triangle
 };
 
 GameGL::GameGL() :
@@ -116,6 +113,7 @@ void GameGL::Update()
     vao_->LinkVBO(*vbo_, 0);
 
     ebo_ = new EBO(indices, sizeof(indices));
+    ebo_->Bind();
 
     vao_->Unbind();
     vbo_->Unbind();
@@ -129,12 +127,19 @@ void GameGL::Render()
     //Clean the back buffer and assing the new color
     glClear(GL_COLOR_BUFFER_BIT);
 
+    float greenvalue = ((float) rand() / (RAND_MAX));
+    int vertex_color_location = glGetUniformLocation(shader_program_->id(), "ourColor");
+
     shader_program_->Activate(); 
+    //shader_program_->setFloat("ourColor", 1.0f);
 
     vao_->Bind();
 
     //Draw the triangle using the GL_TRIANGLE primitives
-    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    vao_->Unbind();
+
     // Take care of all GLFW events
     SDL_GL_SwapWindow(window_);
 }
