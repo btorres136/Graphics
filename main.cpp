@@ -1,6 +1,5 @@
 #include "Game.hpp"
 #include "GameGL.hpp"
-
 #define GL
 
 int main(int agrc, char * argv[])
